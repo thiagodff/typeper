@@ -1,0 +1,7 @@
+{
+  "uuid": "typeper@typeper.local",
+  "name": "Typeper",
+  "description": "Integração do Typeper com GNOME/Wayland: ditado, janela flutuante e colagem.",
+  "shell-version": ["45", "46", "47", "48", "49", "50"],
+  "version": 1
+}
