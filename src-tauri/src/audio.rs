@@ -48,7 +48,7 @@ impl Gate {
     pub fn push(&mut self, frame: &[i16], speech: bool, output: &mut Vec<i16>) -> bool {
         if !self.trim {
             output.extend_from_slice(frame);
-            return !speech;
+            return false;
         }
         if speech {
             for p in self.pre.drain(..) {

@@ -1,15 +1,22 @@
-mod audio;
+pub mod audio;
+#[cfg(feature = "desktop")]
 mod bridge;
+#[cfg(feature = "desktop")]
 mod commands;
+#[cfg(feature = "desktop")]
 mod engine;
-mod model;
-mod providers;
-mod storage;
+pub mod model;
+pub mod providers;
+pub mod storage;
+#[cfg(feature = "desktop")]
 mod tray;
 
+#[cfg(feature = "desktop")]
 use std::sync::{Arc, Mutex};
+#[cfg(feature = "desktop")]
 use tauri::Manager;
 
+#[cfg(feature = "desktop")]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
@@ -68,6 +75,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::snapshot,
+            commands::open_key_page,
             commands::save_settings,
             commands::key_status,
             commands::save_key,

@@ -12,6 +12,25 @@ fn err(e: impl std::fmt::Display) -> String {
     e.to_string()
 }
 
+#[tauri::command]
+pub async fn open_key_page(provider: String) -> CmdResult<()> {
+    let url = match provider.as_str() {
+        "openai" => "https://platform.openai.com/api-keys",
+        "gemini" => "https://aistudio.google.com/apikey",
+        _ => return Err("Provedor inválido.".into()),
+    };
+    let status = tokio::process::Command::new("xdg-open")
+        .arg(url)
+        .status()
+        .await
+        .map_err(err)?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err("Não foi possível abrir o navegador padrão.".into())
+    }
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Snapshot {

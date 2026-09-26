@@ -7,3 +7,6 @@ src-tauri/gen/
 !.env.example
 artifacts/
 .DS_Store
+*.tsbuildinfo
+test-results/
+playwright-report/

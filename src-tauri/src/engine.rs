@@ -25,6 +25,7 @@ pub enum Action {
     Finish,
     Cancel,
     Retry,
+    Quit,
     Result {
         id: String,
         result: Result<Transcription, String>,
@@ -48,6 +49,9 @@ pub async fn run(app: AppHandle, shared: Shared, mut rx: mpsc::UnboundedReceiver
         let action = tokio::select! {
             value = rx.recv() => { match value { Some(value)=>value, None=>break } },
             _ = ticker.tick() => {
+                if !bridge::connected(&shared) {
+                    if let Some(tray)=app.tray_by_id("typeper") { let _=tray.set_visible(true); }
+                }
                 if let Some(current) = &capture {
                     let state = { let b = current.buffer.lock().unwrap(); CaptureState {
                         phase:if b.ended { "ready" } else { "recording" }.into(), paused:b.paused, level:b.level,
@@ -60,7 +64,8 @@ pub async fn run(app: AppHandle, shared: Shared, mut rx: mpsc::UnboundedReceiver
             }
         };
         match action {
-            Action::Cancel => {
+            Action::Cancel | Action::Quit => {
+                let quitting = matches!(action, Action::Quit);
                 // This branch never calls a provider. Dropping Capture stops parec and erases its buffer.
                 capture.take();
                 pending.take();
@@ -73,6 +78,10 @@ pub async fn run(app: AppHandle, shared: Shared, mut rx: mpsc::UnboundedReceiver
                 }
                 active_id.clear();
                 publish(&app, &shared, CaptureState::default()).await;
+                if quitting {
+                    app.exit(0);
+                    break;
+                }
             }
             Action::Toggle if capture.is_none() => {
                 if job.is_some() || pending.is_some() {

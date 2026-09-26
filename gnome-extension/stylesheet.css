@@ -7,10 +7,28 @@
   background-color: rgba(19, 39, 34, 0.98);
   color: #f0f8f2;
   border: 1px solid rgba(188, 239, 207, 0.22);
-  box-shadow: 0 8px 28px 0 rgba(0,0,0,0.28);
+  box-shadow: 0 8px 28px 0 rgba(0, 0, 0, 0.28);
 }
-.typeper-wave { width: 79px; height: 38px; spacing: 3px; }
-.typeper-bar { width: 3px; border-radius: 3px; background-color: #b4efc8; }
-.typeper-label { font-size: 14px; font-weight: 600; width: 130px; }
-.typeper-timer { font-size: 18px; font-feature-settings: "tnum"; }
-.typeper-hint { font-size: 10px; color: #b4c7be; }
+.typeper-wave {
+  width: 79px;
+  height: 38px;
+  spacing: 3px;
+}
+.typeper-bar {
+  width: 3px;
+  border-radius: 3px;
+  background-color: #b4efc8;
+}
+.typeper-label {
+  font-size: 14px;
+  font-weight: 600;
+  width: 130px;
+}
+.typeper-timer {
+  font-size: 18px;
+  font-feature-settings: "tnum";
+}
+.typeper-hint {
+  font-size: 10px;
+  color: #b4c7be;
+}

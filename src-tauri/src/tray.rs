@@ -125,8 +125,7 @@ pub fn create(app: &AppHandle) -> tauri::Result<()> {
             let id = event.id.as_ref();
             match id {
                 "quit" => {
-                    engine::action(app, Action::Cancel);
-                    app.exit(0);
+                    engine::action(app, Action::Quit);
                 }
                 "record" => engine::action(app, Action::Toggle),
                 "cancel" => engine::action(app, Action::Cancel),

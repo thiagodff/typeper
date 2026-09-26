@@ -10,19 +10,47 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [{
-      "label": "main", "title": "Typeper", "width": 1120, "height": 800,
-      "minWidth": 760, "minHeight": 600, "center": true
-    }],
+    "windows": [
+      {
+        "label": "main",
+        "title": "Typeper",
+        "width": 1120,
+        "height": 800,
+        "minWidth": 760,
+        "minHeight": 600,
+        "center": true
+      }
+    ],
     "security": {
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src ipc: http://ipc.localhost; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'"
     }
   },
   "bundle": {
-    "active": true, "targets": ["deb", "appimage"],
-    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.png"],
+    "active": true,
+    "targets": [
+      "deb",
+      "appimage"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png"
+    ],
     "category": "Utility",
-    "shortDescription": "Sua voz, onde você escreve.",
-    "linux": { "deb": { "depends": ["pulseaudio-utils", "gnome-keyring"] } }
+    "shortDescription": "Sua voz, onde voc\u00ea escreve.",
+    "linux": {
+      "deb": {
+        "depends": [
+          "pulseaudio-utils",
+          "gnome-keyring",
+          "wl-clipboard",
+          "xdg-utils"
+        ]
+      }
+    },
+    "resources": {
+      "../gnome-extension/": "gnome-extension/"
+    }
   }
 }

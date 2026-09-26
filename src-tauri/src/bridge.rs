@@ -19,6 +19,9 @@ struct Service {
 impl Service {
     fn hello(&self) -> zbus::fdo::Result<String> {
         *self.shared.bridge_seen.lock().unwrap() = Some(Instant::now());
+        if let Some(tray) = self.app.tray_by_id("typeper") {
+            let _ = tray.set_visible(false);
+        }
         let settings = self
             .shared
             .store
@@ -37,6 +40,40 @@ impl Service {
     }
     fn cancel(&self) {
         let _ = self.shared.tx.send(Action::Cancel);
+    }
+    fn quit(&self) {
+        let _ = self.shared.tx.send(Action::Quit);
+    }
+    fn microphones(&self) -> zbus::fdo::Result<String> {
+        let devices =
+            crate::audio::microphones().map_err(|e| zbus::fdo::Error::Failed(e.to_string()))?;
+        serde_json::to_string(&devices).map_err(|e| zbus::fdo::Error::Failed(e.to_string()))
+    }
+    async fn update_choice(&self, kind: &str, value: &str) -> zbus::fdo::Result<()> {
+        let phase = self.shared.capture.lock().unwrap().phase.clone();
+        if ["recording", "ready", "transcribing"].contains(&phase.as_str()) {
+            return Err(zbus::fdo::Error::Failed(
+                "Finalize a gravação primeiro.".into(),
+            ));
+        }
+        let mut settings = self
+            .shared
+            .store
+            .settings()
+            .map_err(|e| zbus::fdo::Error::Failed(e.to_string()))?;
+        match kind {
+            "provider" => settings.provider = value.into(),
+            "microphone" => settings.microphone = value.into(),
+            "language" => settings.language = value.into(),
+            _ => return Err(zbus::fdo::Error::InvalidArgs("Opção inválida.".into())),
+        }
+        self.shared
+            .store
+            .save_settings(&settings)
+            .map_err(|e| zbus::fdo::Error::Failed(e.to_string()))?;
+        settings_changed(&self.shared, &settings).await;
+        let _ = self.app.emit("data-changed", ());
+        Ok(())
     }
     fn open(&self, page: &str) {
         if let Some(window) = self.app.get_webview_window("main") {
@@ -113,6 +150,10 @@ pub async fn deliver(shared: &Shared, text: &str, paste: bool) -> Result<String>
             )
             .await;
             if let Ok(Ok(status)) = result {
+                anyhow::ensure!(
+                    status != "locked",
+                    "A sessão está bloqueada; copie pelo histórico ao desbloquear."
+                );
                 return Ok(status);
             }
         }
