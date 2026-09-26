@@ -326,10 +326,8 @@ export default class TypeperExtension extends Extension {
   }
   _begin() {
     if (this._finishing) return;
-    if (
-      this._phase === "transcribing" ||
-      (this._phase === "error" && this._canRetry)
-    ) {
+    if (this._phase === "transcribing") return;
+    if (this._phase === "error" && this._canRetry) {
       this._open("activity");
       return;
     }
